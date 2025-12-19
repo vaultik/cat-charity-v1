@@ -11,7 +11,6 @@ from app.api.validators import (
 )
 from app.core.db import get_async_session
 from app.crud import charity_project_crud
-from app.models import CharityProject, Donation
 from app.schemas import (
     CharityProjectCreate, CharityProjectDB, CharityProjectUpdate
 )
