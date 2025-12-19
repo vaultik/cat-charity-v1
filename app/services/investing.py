@@ -51,30 +51,6 @@ def investing_process(
             donations.pop(0)
 
 
-# async def investing_process(
-#         session: AsyncSession
-# ):
-#     donations = await get_objs(Donation, session)
-#     projects = await get_objs(CharityProject, session)
-#     while projects and donations:
-#         free_donation = donations[0].full_amount - donations[0].invested_amount
-#         need_project = projects[0].full_amount - projects[0].invested_amount
-#         if free_donation > need_project:
-#             closed_obj(projects[0])
-#             projects.pop(0)
-#             donations[0].invested_amount += need_project
-#         elif free_donation == need_project:
-#             closed_obj(projects[0])
-#             projects.pop(0)
-#             closed_obj(donations[0])
-#             donations.pop(0)
-#         else:
-#             projects[0].invested_amount += free_donation
-#             closed_obj(donations[0])
-#             donations.pop(0)
-#     await session.commit()
-
-
 def process_edit_project(
         project: CharityProject,
         obj_in: CharityProjectUpdate
