@@ -8,7 +8,7 @@ from app.crud import donation_crud
 from app.schemas import (
     DonationCreate, DonationDB, DonationFullInfoDB
 )
-from app.services import investing_process
+from app.services import run_investing_process
 
 router = APIRouter()
 SessionDep = Annotated[AsyncSession, Depends(get_async_session)]
@@ -42,7 +42,7 @@ async def create_donation(
         session: SessionDep
 ):
     new_donation = await donation_crud.create(
-        donation, session
+        donation, session, True
     )
-    await investing_process(session)
+    new_donation = await run_investing_process(new_donation, session)
     return new_donation

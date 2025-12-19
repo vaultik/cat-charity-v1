@@ -1,1 +1,3 @@
-from .investing import investing_process, process_edit_project  # noqa
+from .investing import (  # noqa
+    process_edit_project, run_investing_process
+)

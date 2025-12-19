@@ -14,7 +14,8 @@ class CRUDCharityProject(CRUDBase):
             self,
             db_obj,
             obj_in,
-            session: AsyncSession
+            session: AsyncSession,
+            not_commit=False
     ):
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.model_dump(exclude_unset=True)
@@ -24,8 +25,9 @@ class CRUDCharityProject(CRUDBase):
                 setattr(db_obj, field, update_data[field])
 
         session.add(db_obj)
-        await session.commit()
-        await session.refresh(db_obj)
+        if not not_commit:
+            await session.commit()
+            await session.refresh(db_obj)
         return db_obj
 
     async def remove(

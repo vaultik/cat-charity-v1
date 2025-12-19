@@ -11,10 +11,13 @@ from app.api.validators import (
 )
 from app.core.db import get_async_session
 from app.crud import charity_project_crud
+from app.models import CharityProject, Donation
 from app.schemas import (
     CharityProjectCreate, CharityProjectDB, CharityProjectUpdate
 )
-from app.services import investing_process, process_edit_project
+from app.services import (
+    process_edit_project, run_investing_process
+)
 
 router = APIRouter()
 SessionDep = Annotated[AsyncSession, Depends(get_async_session)]
@@ -47,8 +50,8 @@ async def create_new_project(
         session: SessionDep,
 ):
     await check_name_duplicate(project.name, session)
-    new_project = await charity_project_crud.create(project, session)
-    await investing_process(session)
+    new_project = await charity_project_crud.create(project, session, True)
+    new_project = await run_investing_process(new_project, session)
     return new_project
 
 
@@ -73,10 +76,10 @@ async def partially_update_project(
         project, session, obj_in.name, obj_in.full_amount
     )
     project = await charity_project_crud.update(
-        project, obj_in, session
+        project, obj_in, session, True
     )
     process_edit_project(project, obj_in)
-    await investing_process(session)
+    project = await run_investing_process(project, session)
     return project
 
 

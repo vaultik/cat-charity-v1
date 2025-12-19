@@ -1,11 +1,26 @@
 from datetime import datetime as dt
 from typing import List
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.crud import charity_project_crud, donation_crud
 from app.models import CharityProject, Donation
 from app.schemas import CharityProjectUpdate
+
+
+async def run_investing_process(
+        obj: 'CharityProject | Donation',
+        session: AsyncSession
+):
+    await session.flush()
+    projects = await charity_project_crud.get_objs_for_investing(session)
+    donations = await donation_crud.get_objs_for_investing(session)
+
+    investing_process(projects, donations)
+
+    await session.commit()
+    await session.refresh(obj)
+    return obj
 
 
 def closed_obj(obj) -> None:
@@ -14,23 +29,11 @@ def closed_obj(obj) -> None:
     obj.close_date = dt.now()
 
 
-async def get_objs(
-        model, session: AsyncSession
-) -> List['CharityProject | Donation']:
-    data = await session.execute(
-        select(model)
-        .where(model.fully_invested.is_(False))
-        .order_by(model.create_date, model.id)
-    )
-    return data.scalars().all()
-
-
-async def investing_process(
-        session: AsyncSession
+def investing_process(
+        projects: List[CharityProject],
+        donations: List[Donation]
 ):
-    donations = await get_objs(Donation, session)
-    projects = await get_objs(CharityProject, session)
-    while projects and donations:
+    while donations and projects:
         free_donation = donations[0].full_amount - donations[0].invested_amount
         need_project = projects[0].full_amount - projects[0].invested_amount
         if free_donation > need_project:
@@ -46,7 +49,30 @@ async def investing_process(
             projects[0].invested_amount += free_donation
             closed_obj(donations[0])
             donations.pop(0)
-    await session.commit()
+
+
+# async def investing_process(
+#         session: AsyncSession
+# ):
+#     donations = await get_objs(Donation, session)
+#     projects = await get_objs(CharityProject, session)
+#     while projects and donations:
+#         free_donation = donations[0].full_amount - donations[0].invested_amount
+#         need_project = projects[0].full_amount - projects[0].invested_amount
+#         if free_donation > need_project:
+#             closed_obj(projects[0])
+#             projects.pop(0)
+#             donations[0].invested_amount += need_project
+#         elif free_donation == need_project:
+#             closed_obj(projects[0])
+#             projects.pop(0)
+#             closed_obj(donations[0])
+#             donations.pop(0)
+#         else:
+#             projects[0].invested_amount += free_donation
+#             closed_obj(donations[0])
+#             donations.pop(0)
+#     await session.commit()
 
 
 def process_edit_project(

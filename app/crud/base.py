@@ -27,11 +27,24 @@ class CRUDBase:
     async def create(
             self,
             obj_in,
-            session: AsyncSession
+            session: AsyncSession,
+            not_commit=False
     ):
         obj_in_data = obj_in.dict()
         db_obj = self.model(**obj_in_data)
         session.add(db_obj)
-        await session.commit()
-        await session.refresh(db_obj)
+        if not not_commit:
+            await session.commit()
+            await session.refresh(db_obj)
         return db_obj
+
+    async def get_objs_for_investing(
+            self,
+            session: AsyncSession
+    ):
+        data = await session.execute(
+            select(self.model)
+            .where(self.model.fully_invested.is_(False))
+            .order_by(self.model.create_date, self.model.id)
+        )
+        return data.scalars().all()
