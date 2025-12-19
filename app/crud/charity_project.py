@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
 from app.models.charity_project import CharityProject
-# from app.schemas.meeting_room import MeetingRoomCreate, MeetingRoomUpdate
 
 
 class CRUDCharityProject(CRUDBase):
@@ -44,7 +43,9 @@ class CRUDCharityProject(CRUDBase):
             session: AsyncSession
     ) -> Optional[int]:
         db_project_id = await session.execute(
-            select(CharityProject.id).where(CharityProject.name == project_name)
+            select(CharityProject.id).where(
+                CharityProject.name == project_name
+            )
         )
         db_project_id = db_project_id.scalars().first()
         return db_project_id

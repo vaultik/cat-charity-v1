@@ -17,12 +17,12 @@ def closed_obj(obj) -> None:
 async def get_objs(
         model, session: AsyncSession
 ) -> List['CharityProject | Donation']:
-    objs = await session.execute(
+    data = await session.execute(
         select(model)
         .where(model.fully_invested.is_(False))
         .order_by(model.create_date, model.id)
     )
-    return objs.scalars().all()
+    return data.scalars().all()
 
 
 async def investing_process(
