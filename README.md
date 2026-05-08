@@ -29,8 +29,8 @@ Full list of dependencies: `requirements.txt`
  
 ```bash
 # Clone the repository
-git clone https://github.com/Marakes/cat-charity-v1
-cd cat-charity-v1
+git clone https://github.com/Marakes/cat-charity-1
+cd cat-charity-1
  
 # Create and activate virtual environment
 python3 -m venv venv
