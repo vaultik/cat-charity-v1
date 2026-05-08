@@ -4,8 +4,8 @@ A donation platform for cat support projects. Donations are automatically alloca
 Built with FastAPI + SQLAlchemy + Alembic.
  
 > **This is v1** — core donation logic only.  
-> [v2](https://github.com/Marakes/cat-charity-2) adds user authentication (FastAPI Users).  
-> [v3](https://github.com/Marakes/QRkot-spreadsheets) adds Google Sheets export.
+> [v2](https://github.com/Marakes/cat-charity-v2) adds user authentication (FastAPI Users).  
+> [v3](https://github.com/Marakes/cat-charity-v3) adds Google Sheets export.
  
 ## Features
  
@@ -29,8 +29,8 @@ Full list of dependencies: `requirements.txt`
  
 ```bash
 # Clone the repository
-git clone https://github.com/Marakes/cat-charity-1
-cd cat-charity-1
+git clone https://github.com/Marakes/cat-charity-v1
+cd cat-charity-v1
  
 # Create and activate virtual environment
 python3 -m venv venv
